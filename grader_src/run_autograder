@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+echo $GTEST_OUTPUT
+export GTEST_OUTPUT=xml:/autograder/source/out.xml
+cd /autograder/submission
+
+cmake CMakeLists.txt
+
+make
+
+./runTests
+
+cd /autograder/source
+./grader.py > /autograder/results/results.json
