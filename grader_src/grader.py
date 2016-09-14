@@ -127,7 +127,7 @@ def generateJSON(TR):
         temp_dict["name"] = result.name
         temp_dict["score"] = calculatePoints(result)
         temp_dict["max_score"] = result.points
-        temp_dict["output"]= result.msg
+        #temp_dict["output"]= result.msg
         results_list.append(temp_dict)
     final_result["tests"]= results_list
     return json.dumps(final_result)
