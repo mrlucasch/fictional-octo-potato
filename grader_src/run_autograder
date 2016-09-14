@@ -8,8 +8,21 @@ cd /autograder/submission
 cmake CMakeLists.txt
 
 make
+if [ $? != 0 ]; then
+	cd /autograder/source
+	./grader.py compileError > /autograder/results/results.json
+	exit
+fi
 
-./runTests
+
+timeout 3m ./runTests
+if [ $? != 0 ]; then
+	cd /autograder/source
+	./grader.py infiniteError > /autograder/results/results.json
+	exit
+fi
+
 
 cd /autograder/source
 ./grader.py > /autograder/results/results.json
+cat /autograder/results/results.json

@@ -3,8 +3,8 @@
 
 from xml.dom import minidom
 import json
+import sys
 
-xmldoc = minidom.parse('/autograder/source/out.xml')
 
 
 class TestCase:
@@ -79,7 +79,6 @@ def getTestSuite(xmldoc):
 
 
 
-TS = getTestSuite(xmldoc)
 
 
 
@@ -113,8 +112,12 @@ def calculatePoints(node):
     else: 
         return node.points
 
-
-
+#Generates the json if it fails to compile or runs forever
+def generateFailureJSON(error):
+	final_result = {}
+	final_result["score"] = 0
+	final_result["output"] = error
+	return json.dumps(final_result)
 #Takes in test results from gatherData function. Produces list of objects for ouput
 def generateJSON(TR):
     final_result = {}
@@ -130,12 +133,23 @@ def generateJSON(TR):
     return json.dumps(final_result)
 
 
-test_results = gatherData(TS)
 
+##Only runs if things compiled and ran
+def grade():
+	xmldoc = minidom.parse('/autograder/source/out.xml')
+	TS = getTestSuite(xmldoc)
+	test_results = gatherData(TS)
+	results = generateJSON(test_results)
+	print results
 
-results = generateJSON(test_results)
-
-
-print results
-
-
+#check if argument specified
+if len(sys.argv) !=1:
+	if sys.argv[1] == "compileError":
+		results = generateFailureJSON("Failed to Compile!")
+		print results
+	elif sys.argv[1] == "infiniteError":
+		results = generateFailureJSON("Tests timed out. There is an infinite loop or fork bomb!")
+		print results
+		
+else:
+	grade()	
